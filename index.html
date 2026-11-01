@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>할 일 목록</title>
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+      color: #202124;
+      font-family: "Apple SD Gothic Neo", "Noto Sans KR", sans-serif;
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.82), rgba(255, 255, 255, 0.82)),
+        repeating-linear-gradient(0deg, #dce7df 0, #dce7df 1px, transparent 1px, transparent 28px);
+    }
+
+    main {
+      width: min(100%, 520px);
+      padding: 32px;
+      border: 1px solid #d7ddd9;
+      border-radius: 8px;
+      background: #fffefb;
+      box-shadow: 0 18px 50px rgba(34, 52, 43, 0.12);
+    }
+
+    h1 {
+      margin: 0 0 24px;
+      color: #173f35;
+      font-family: Georgia, "Times New Roman", serif;
+      font-size: 32px;
+      letter-spacing: 0;
+    }
+
+    .todo-form {
+      display: grid;
+      grid-template-columns: 1fr auto;
+      gap: 8px;
+    }
+
+    input[type="text"] {
+      min-width: 0;
+      padding: 12px 14px;
+      border: 1px solid #aebbb4;
+      border-radius: 6px;
+      font: inherit;
+      outline: none;
+    }
+
+    input[type="text"]:focus {
+      border-color: #28715e;
+      box-shadow: 0 0 0 3px rgba(40, 113, 94, 0.14);
+    }
+
+    button {
+      border: 0;
+      border-radius: 6px;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .add-button {
+      padding: 0 18px;
+      color: #fff;
+      background: #28715e;
+    }
+
+    .add-button:hover {
+      background: #1f5a4b;
+    }
+
+    ul {
+      display: grid;
+      gap: 8px;
+      margin: 24px 0 0;
+      padding: 0;
+      list-style: none;
+    }
+
+    li {
+      display: grid;
+      grid-template-columns: auto 1fr auto;
+      align-items: center;
+      gap: 12px;
+      min-height: 48px;
+      padding: 8px 10px;
+      border-bottom: 1px solid #e4e8e5;
+    }
+
+    .todo-check {
+      width: 19px;
+      height: 19px;
+      accent-color: #28715e;
+      cursor: pointer;
+    }
+
+    .todo-text {
+      min-width: 0;
+      overflow-wrap: anywhere;
+    }
+
+    li.completed .todo-text {
+      color: #89918d;
+      text-decoration: line-through;
+    }
+
+    .delete-button {
+      width: 34px;
+      height: 34px;
+      padding: 0;
+      color: #a33a32;
+      background: transparent;
+      font-size: 22px;
+      line-height: 1;
+    }
+
+    .delete-button:hover {
+      background: #f8e9e6;
+    }
+
+    @media (max-width: 480px) {
+      main {
+        padding: 24px 18px;
+      }
+
+      .todo-form {
+        grid-template-columns: 1fr;
+      }
+
+      .add-button {
+        min-height: 44px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>오늘의 할 일</h1>
+
+    <form class="todo-form" id="todoForm">
+      <input id="todoInput" type="text" placeholder="할 일을 입력하세요" autocomplete="off" aria-label="할 일">
+      <button class="add-button" type="submit">추가</button>
+    </form>
+
+    <ul id="todoList" aria-live="polite"></ul>
+  </main>
+
+  <script>
+    const todoForm = document.querySelector("#todoForm");
+    const todoInput = document.querySelector("#todoInput");
+    const todoList = document.querySelector("#todoList");
+
+    function addTodo(text) {
+      const item = document.createElement("li");
+
+      const checkbox = document.createElement("input");
+      checkbox.type = "checkbox";
+      checkbox.className = "todo-check";
+      checkbox.setAttribute("aria-label", `${text} 완료`);
+
+      const label = document.createElement("span");
+      label.className = "todo-text";
+      label.textContent = text;
+
+      const deleteButton = document.createElement("button");
+      deleteButton.type = "button";
+      deleteButton.className = "delete-button";
+      deleteButton.textContent = "×";
+      deleteButton.setAttribute("aria-label", `${text} 삭제`);
+      deleteButton.title = "삭제";
+
+      checkbox.addEventListener("change", () => {
+        item.classList.toggle("completed", checkbox.checked);
+      });
+
+      deleteButton.addEventListener("click", () => {
+        item.remove();
+      });
+
+      item.append(checkbox, label, deleteButton);
+      todoList.append(item);
+    }
+
+    todoForm.addEventListener("submit", (event) => {
+      event.preventDefault();
+      const text = todoInput.value.trim();
+
+      if (!text) {
+        todoInput.focus();
+        return;
+      }
+
+      addTodo(text);
+      todoInput.value = "";
+      todoInput.focus();
+    });
+  </script>
+</body>
+</html>
